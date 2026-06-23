@@ -1,6 +1,8 @@
 <?php
+require_once 'auth.php';
 require_once 'config.php';
-
+requireLogin();
+requireAdmin();
 $message = '';
 $name = $description = $price = $stock = $category_id = $supplier_id = '';
 
@@ -13,11 +15,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $supplier_id = $_POST['supplier_id'] ?? '';
 
     if (empty($name) || empty($category_id) || empty($supplier_id)) {
-        $message = '<p style="color:red;">Name, category, and supplier are required.</p>';
+        $message = '<div class="error-box"><p>Name, category, and supplier are required.</p></div>';
     } elseif (!is_numeric($price) || (float)$price < 0) {
-        $message = '<p style="color:red;">Please enter a valid price.</p>';
+        $message = '<div class="error-box"><p>Please enter a valid price.</p></div>';
     } elseif (!is_numeric($stock) || (int)$stock < 0) {
-        $message = '<p style="color:red;">Please enter a valid stock quantity.</p>';
+        $message = '<div class="error-box"><p>Please enter a valid stock quantity.</p></div>';
     } else {
         $price_val = (float)$price;
         $stock_val = (int)$stock;
@@ -28,11 +30,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 VALUES ('$name', '$description', $price_val, $stock_val, $cat_val, $sup_val)";
 
         if ($conn->query($sql)) {
-            echo '<p style="color:green; font-size:1.2em;">Product added! Redirecting...</p>';
-            header('Refresh: 2; URL=index.php');
+            echo "<script>
+                alert('Product added successfully!');
+                window.location='index.php';
+            </script>";
             exit;
         } else {
-            $message = '<p style="color:red;">Error: ' . $conn->error . '</p>';
+            $message = '<div class="error-box"><p>Error: ' . $conn->error . '</p></div>';
         }
     }
 }

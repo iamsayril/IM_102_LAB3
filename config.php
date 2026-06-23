@@ -1,9 +1,9 @@
 <?php
 
-$host = 'localhost';   
-$user = 'root';         
-$pass = '';            
-$db   = 'im102_lab3';   
+$host = 'localhost';
+$user = 'root';
+$pass = '';
+$db   = 'im102_quinio_db';
 
 $conn = new mysqli($host, $user, $pass, $db);
 

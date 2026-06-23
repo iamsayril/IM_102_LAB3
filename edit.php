@@ -1,5 +1,9 @@
 <?php
+require_once 'auth.php';
 require_once 'config.php';
+requireLogin();
+requireAdmin();
+
 
 $id = (int)($_GET['id'] ?? 0);
 $result = $conn->query("SELECT * FROM products WHERE id = $id");

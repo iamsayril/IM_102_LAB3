@@ -1,5 +1,7 @@
 <?php
+require_once 'auth.php';
 require_once 'config.php';
+requireLogin();
 
 $search = $_GET['search'] ?? '';
 $category = $_GET['category'] ?? '';
