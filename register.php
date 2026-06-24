@@ -2,7 +2,7 @@
 require_once 'config.php';
 require_once 'auth.php';
 
-if (isLoggedIn()) {
+if (isLoggedIn() && !isAdmin()) {
     header('Location: index.php');
     exit;
 }
@@ -72,18 +72,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<?php if (isLoggedIn()): ?>
+    <?php include 'navbar.php'; ?>
+<?php else: ?>
+    <div class="container">
+        <nav class="navbar">
+            <div class="navbar-links">
+                <a href="register.php" class="active">Register</a>
+                <a href="login.php">Login</a>
+            </div>
+        </nav>
+    </div>
+<?php endif; ?>
+
 <div class="container auth">
-<div class="container">
-
-    <nav class="navbar">
-        <div class="navbar-links">
-            <a href="index.php">Home</a>
-            <a href="report.php">Report</a>
-            <a href="register.php" class="active">Register</a>
-            <a href="login.php">Login</a>
-        </div>
-    </nav>
-
     <div class="form-page">
 
         <h1>Register User</h1>
@@ -124,7 +127,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
 
     </div>
-
 </div>
 
 </body>

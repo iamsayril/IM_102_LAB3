@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 15, 2026 at 04:26 AM
+-- Generation Time: Jun 24, 2026 at 04:22 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -100,6 +100,30 @@ INSERT INTO `suppliers` (`id`, `name`, `contact_person`, `phone`) VALUES
 (2, 'BakeShop INC', 'Alyssa Gaton', '91122334455'),
 (3, 'KentsFarm', 'Jonathan Kent', '9223334455');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password_hash` varchar(255) NOT NULL,
+  `role` enum('admin','staff') DEFAULT 'staff',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `username`, `email`, `password_hash`, `role`, `created_at`) VALUES
+(1, 'admin', 'admin@example.com', '$2y$10$BrYJenw8brpRyiPi9TswquhWOGkMZsp7nRP4Kmms6BiIOOnBWo46S', 'admin', '2026-06-24 01:18:35'),
+(2, 'test_staff', 'test_staff@gmail.com', '$2y$10$rOOfkH5r8D1qwju74nWZru9AZxf8FTdSbpWXbwZuAhssBnqVFfobm', 'staff', '2026-06-24 01:21:20'),
+(3, 'test2_staff333', 'test2_staff@gmail.com', '$2y$10$W1zhPUMzP1LDUTLfIKDT4.F.WTvIwagDr5FwPX//aFh2ZKbaylNae', 'staff', '2026-06-24 01:51:21');
+
 --
 -- Indexes for dumped tables
 --
@@ -125,6 +149,14 @@ ALTER TABLE `suppliers`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -145,6 +177,12 @@ ALTER TABLE `products`
 --
 ALTER TABLE `suppliers`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables

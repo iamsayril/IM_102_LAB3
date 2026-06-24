@@ -4,7 +4,6 @@ require_once 'config.php';
 requireLogin();
 requireAdmin();
 
-
 $id = (int)($_GET['id'] ?? 0);
 $result = $conn->query("SELECT * FROM products WHERE id = $id");
 $product = $result->fetch_assoc();
@@ -24,11 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $supplier_id = $_POST['supplier_id'] ?? '';
 
     if (empty($name) || empty($category_id) || empty($supplier_id)) {
-        $message = '<p style="color:red;">Name, category, and supplier are required.</p>';
+        $message = '<div class="error-box"><p>Name, category, and supplier are required.</p></div>';
     } elseif (!is_numeric($price) || (float)$price < 0) {
-        $message = '<p style="color:red;">Please enter a valid price.</p>';
+        $message = '<div class="error-box"><p>Please enter a valid price.</p></div>';
     } elseif (!is_numeric($stock) || (int)$stock < 0) {
-        $message = '<p style="color:red;">Please enter a valid stock quantity.</p>';
+        $message = '<div class="error-box"><p>Please enter a valid stock quantity.</p></div>';
     } else {
         $price_val = (float)$price;
         $stock_val = (int)$stock;
@@ -44,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: index.php');
             exit;
         } else {
-            $message = '<p style="color:red;">Error: ' . $conn->error . '</p>';
+            $message = '<div class="error-box"><p>Error: ' . $conn->error . '</p></div>';
         }
     }
 } else {
@@ -67,6 +66,7 @@ $suppliers  = $conn->query("SELECT id, name FROM suppliers ORDER BY name");
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <?php include 'navbar.php'; ?>
     <div class="container form-page">
         <h1>Edit Product #<?= $product['id'] ?></h1>
 

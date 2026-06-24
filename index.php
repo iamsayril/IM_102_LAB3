@@ -75,7 +75,9 @@ $categories = $conn->query("SELECT DISTINCT name FROM categories ORDER BY name")
             </select>
             <button type="submit">Filter</button>
             <a href="index.php"><button type="button">Reset</button></a>
-            <a href="add.php"><button type="button" class="btn-add">Add Product</button></a>
+            <?php if (isAdmin()): ?>
+                <a href="add.php"><button type="button" class="btn-add">Add Product</button></a>
+            <?php endif; ?>
             <a href="report.php"><button type="button" class="btn-report">View Report</button></a>
         </form>
 
@@ -112,10 +114,14 @@ $categories = $conn->query("SELECT DISTINCT name FROM categories ORDER BY name")
                     <td><?= htmlspecialchars($row['contact_name']) ?></td>
                     <td><?= $row['created_at'] ?></td>
                     <td class="actions">
-                        <a href="edit.php?id=<?= $row['id'] ?>" class="btn-edit">Edit</a>
-                        <a href="delete.php?id=<?= $row['id'] ?>"
-                           onclick="return confirm('Delete <?= htmlspecialchars(addslashes($row['name'])) ?>?')"
-                           class="btn-delete">Delete</a>
+                        <?php if (isAdmin()): ?>
+                            <a href="edit.php?id=<?= $row['id'] ?>" class="btn-edit">Edit</a>
+                            <a href="delete.php?id=<?= $row['id'] ?>"
+                               onclick="return confirm('Delete <?= htmlspecialchars(addslashes($row['name'])) ?>?')"
+                               class="btn-delete">Delete</a>
+                        <?php else: ?>
+                            <span style="color:#888; font-size:0.82rem; font-style:italic;">View Only</span>
+                        <?php endif; ?>
                     </td>
                 </tr>
             <?php endwhile; ?>

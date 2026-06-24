@@ -1,4 +1,3 @@
-
 /* =========================
    COLORS
    Primary Green : #2f5f4d
@@ -38,6 +37,7 @@ body {
     font-size: 1.6rem;
     margin-bottom: 24px;
 }
+
 /* HEADINGS */
 
 h1 {
@@ -52,22 +52,37 @@ h1 {
 .navbar {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    gap: 4px;
-    border-bottom: 2px solid #2f5f4d;
-    padding-bottom: 10px;
+    justify-content: space-between;
+    background: #1e3f33;
+    padding: 10px 20px;
+    border-radius: 8px;
     margin-bottom: 24px;
 }
+
+/* BRAND — left side */
+
+.navbar-brand {
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* LINKS — pushed to the right */
 
 .navbar-links {
     display: flex;
     gap: 4px;
+    align-items: center;
+    margin-left: auto;
 }
 
 .navbar-links a {
-    color: #2f5f4d;
+    color: #c8e6d8;
     text-decoration: none;
-    padding: 6px 18px;
+    padding: 6px 16px;
     border-radius: 6px;
     font-size: 0.92rem;
     font-weight: 500;
@@ -75,14 +90,77 @@ h1 {
 }
 
 .navbar-links a:hover {
-    background: #e7f3ed;
-    color: #1e3f33;
+    background: rgba(255,255,255,0.12);
+    color: white;
 }
 
 .navbar-links a.active {
     background: #2f5f4d;
     color: white;
     font-weight: 700;
+}
+
+/* DIVIDER between links and user info */
+
+.navbar-divider {
+    width: 1px;
+    height: 22px;
+    background: rgba(255,255,255,0.2);
+    margin: 0 8px;
+}
+
+/* NAVBAR RIGHT — user info */
+
+.navbar-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.navbar-username {
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+.navbar-role-badge {
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 3px 11px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+}
+
+/* Admin badge — gold */
+.navbar-role-badge.role-admin {
+    background: #f59e0b;
+    color: #1e3f33;
+    border: 1px solid #d97706;
+}
+
+/* Staff badge — bright teal */
+.navbar-role-badge.role-staff {
+    background: #86efac;
+    color: #14532d;
+    border: 1px solid #4ade80;
+}
+
+.navbar-logout {
+    color: white;
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 5px 14px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.35);
+    transition: all 0.2s ease;
+}
+
+.navbar-logout:hover {
+    background: rgba(255,255,255,0.15);
+    border-color: rgba(255,255,255,0.6);
 }
 
 /* BACK BUTTON */
@@ -399,4 +477,3 @@ td.actions {
 .error-box p {
     margin: 6px 0;
 }
-
