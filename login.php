@@ -16,87 +16,78 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
 
     if (empty($username) || empty($password)) {
-
         $error = "Please enter username and password.";
-
     } else {
-
-        $stmt = $conn->prepare(
-            "SELECT * FROM users WHERE username = ?"
-        );
+        $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
         $stmt->bind_param("s", $username);
         $stmt->execute();
 
         $result = $stmt->get_result();
-        $user   = $result->fetch_assoc();
+        $user = $result->fetch_assoc();
         $stmt->close();
 
         if ($user !== null && password_verify($password, $user['password_hash'])) {
-
-            $_SESSION['user_id']  = $user['id'];
+            $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
-            $_SESSION['role']     = $user['role'] ?? 'staff';
+            $_SESSION['role'] = $user['role'] ?? 'staff';
 
             header('Location: index.php');
             exit;
-
         } else {
-
             $error = "Invalid username or password.";
-
         }
     }
 }
 ?>
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Login</title>
+    <title>Login — Inventory System</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-<div class="container auth">
-<div class="container">
 
-<nav class="navbar">
-        <div class="navbar-links">
-            <a href="register.php">Register</a>
-            <a href="login.php" class="active">Login</a>
+<body class="auth-body">
+
+    <div class="auth-wrapper">
+
+        <div class="auth-logo">
+            <div class="auth-logo-text">Inventory System</div>
         </div>
-    </nav>
 
-    <div class="form-page">
+        <div class="auth-card">
 
-        <h1>Login</h1>
+            <h1>Welcome back</h1>
+            <p class="auth-subtitle">Sign in to your account to continue.</p>
 
-        <?php if (!empty($error)): ?>
-        <div class="error-box">
-            <p><?= htmlspecialchars($error) ?></p>
+            <?php if (!empty($error)): ?>
+                <div class="error-box">
+                    <p><?= htmlspecialchars($error) ?></p>
+                </div>
+            <?php endif; ?>
+
+            <form method="POST">
+
+                <label>Username</label>
+                <input type="text" name="username" value="<?= htmlspecialchars($username) ?>"
+                    placeholder="Enter your username" autocomplete="username">
+
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Enter your password"
+                    autocomplete="current-password">
+
+                <button type="submit">Sign In</button>
+
+            </form>
+
+            <div class="auth-divider"></div>
+            <div class="auth-footer">
+                Don't have an account? <a href="register.php">Register here</a>
+            </div>
+
         </div>
-        <?php endif; ?>
-
-        <form method="POST">
-
-            <label>Username</label>
-            <input
-                type="text"
-                name="username"
-                value="<?= htmlspecialchars($username) ?>"
-            >
-
-            <label>Password</label>
-            <input
-                type="password"
-                name="password"
-            >
-
-            <button type="submit">Login</button>
-
-        </form>
-
     </div>
 
-</div>
-
 </body>
+
 </html>

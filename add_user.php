@@ -1,14 +1,12 @@
 <?php
-require_once 'config.php';
 require_once 'auth.php';
-
-if (isLoggedIn() && !isAdmin()) {
-    header('Location: index.php');
-    exit;
-}
+require_once 'config.php';
+requireLogin();
+requireAdmin();
 
 $username = "";
 $email = "";
+$role = "staff";
 $errors = [];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -17,6 +15,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST['email']);
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
+    $role = $_POST['role'] ?? 'staff';
+
+    // Sanitize role
+    if (!in_array($role, ['admin', 'staff'])) {
+        $role = 'staff';
+    }
 
     if (empty($username))
         $errors[] = "Username is required.";
@@ -40,7 +44,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errors[] = "Passwords do not match.";
 
     if (empty($errors)) {
-        $stmt = $conn->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
+        $stmt = $conn->prepare(
+            "SELECT id FROM users WHERE username = ? OR email = ?"
+        );
         $stmt->bind_param("ss", $username, $email);
         $stmt->execute();
         if ($stmt->get_result()->num_rows > 0)
@@ -50,16 +56,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (empty($errors)) {
         $password_hash = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $conn->prepare("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)");
-        $stmt->bind_param("sss", $username, $email, $password_hash);
+        $stmt = $conn->prepare(
+            "INSERT INTO users (username, email, password_hash, role) VALUES (?, ?, ?, ?)"
+        );
+        $stmt->bind_param("ssss", $username, $email, $password_hash, $role);
         if ($stmt->execute()) {
             echo "<script>
-                alert('Registration Successful!');
-                window.location='register.php';
+                alert('User added successfully!');
+                window.location='users.php';
             </script>";
             exit();
         } else {
-            $errors[] = "Registration failed.";
+            $errors[] = "Failed to add user.";
         }
         $stmt->close();
     }
@@ -69,27 +77,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html>
 
 <head>
-    <title>Register — Inventory System</title>
+    <title>Add User</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="auth-body">
+<body>
 
-    <div class="auth-wrapper">
+    <?php include 'navbar.php'; ?>
 
-        <div class="auth-logo">
-            <div class="auth-logo-text">Inventory System</div>
-        </div>
+    <div class="container auth">
+        <div class="form-page">
 
-        <div class="auth-card">
-
-            <h1>Create account</h1>
-            <p class="auth-subtitle">Fill in the details below to register.</p>
+            <h1>Add User</h1>
 
             <?php if (!empty($errors)): ?>
                 <div class="error-box">
-                    <?php foreach ($errors as $err): ?>
-                        <p><?= htmlspecialchars($err) ?></p>
+                    <?php foreach ($errors as $error): ?>
+                        <p>
+                            <?= htmlspecialchars($error) ?>
+                        </p>
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
@@ -98,27 +104,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 <label>Username</label>
                 <input type="text" name="username" value="<?= htmlspecialchars($username) ?>"
-                    placeholder="Min. 3 characters" autocomplete="username">
+                    placeholder="e.g. john_doe">
 
                 <label>Email</label>
                 <input type="email" name="email" value="<?= htmlspecialchars($email) ?>"
-                    placeholder="e.g. you@example.com" autocomplete="email">
+                    placeholder="e.g. john@example.com">
 
                 <label>Password</label>
-                <input type="password" name="password" placeholder="Min. 6 characters" autocomplete="new-password">
+                <input type="password" name="password" placeholder="Min. 6 characters">
 
                 <label>Confirm Password</label>
-                <input type="password" name="confirm_password" placeholder="Re-enter your password"
-                    autocomplete="new-password">
+                <input type="password" name="confirm_password" placeholder="Re-enter password">
 
-                <button type="submit">Register</button>
+                <label>Role</label>
+                <select name="role">
+                    <option value="admin" <?= $role === 'admin' ? 'selected' : '' ?>>Admin</option>
+                    <option value="staff" <?= $role === 'staff' ? 'selected' : '' ?>>Staff</option>
+                </select>
+
+                <button type="submit">Add User</button>
+                <a href="users.php" class="cancel">Cancel</a>
 
             </form>
-
-            <div class="auth-divider"></div>
-            <div class="auth-footer">
-                Already have an account? <a href="login.php">Sign in here</a>
-            </div>
 
         </div>
     </div>

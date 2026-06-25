@@ -9,10 +9,12 @@ $category = $_GET['category'] ?? '';
 $sql = "SELECT p.id, p.name, p.description, p.price, p.stock, p.created_at,
                c.name AS category_name,
                s.name AS supplier_name,
-               s.contact_person AS contact_name
+               s.contact_person AS contact_name,
+               u.username AS added_by
         FROM products p
         JOIN categories c ON p.category_id = c.id
         JOIN suppliers s ON p.supplier_id = s.id
+        LEFT JOIN users u ON p.added_by = u.id
         WHERE 1=1";
 
 if (!empty($search)) {
@@ -50,13 +52,15 @@ $categories = $conn->query("SELECT DISTINCT name FROM categories ORDER BY name")
 ?>
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>Inventory System</title>
-<link rel="stylesheet" href="style.css?v=1">
+    <title>Inventory System</title>
+    <link rel="stylesheet" href="style.css?v=1">
 </head>
+
 <body>
 
-<?php include 'navbar.php'; ?>
+    <?php include 'navbar.php'; ?>
     <div class="container">
         <h1>Product Inventory</h1>
         <br>
@@ -64,7 +68,7 @@ $categories = $conn->query("SELECT DISTINCT name FROM categories ORDER BY name")
 
         <form method="GET" class="filters">
             <input type="text" name="search" placeholder="Search by name or description..."
-                   value="<?= htmlspecialchars($search) ?>">
+                value="<?= htmlspecialchars($search) ?>">
             <select name="category">
                 <option value="">All Categories</option>
                 <?php while ($c = $categories->fetch_assoc()): ?>
@@ -78,7 +82,6 @@ $categories = $conn->query("SELECT DISTINCT name FROM categories ORDER BY name")
             <?php if (isAdmin()): ?>
                 <a href="add.php"><button type="button" class="btn-add">Add Product</button></a>
             <?php endif; ?>
-            <a href="report.php"><button type="button" class="btn-report">View Report</button></a>
         </form>
 
         <div class="summary-bar">
@@ -98,6 +101,7 @@ $categories = $conn->query("SELECT DISTINCT name FROM categories ORDER BY name")
                 <th>Stock</th>
                 <th>Supplier</th>
                 <th>Contact Person</th>
+                <th>Added By</th>
                 <th>Created At</th>
                 <th>Actions</th>
             </tr>
@@ -112,13 +116,15 @@ $categories = $conn->query("SELECT DISTINCT name FROM categories ORDER BY name")
                     <td><?= $row['stock'] ?></td>
                     <td><?= htmlspecialchars($row['supplier_name']) ?></td>
                     <td><?= htmlspecialchars($row['contact_name']) ?></td>
+                    <td><?= $row['added_by'] ? htmlspecialchars($row['added_by']) : '<span style="color:#bbb;">—</span>' ?>
+                    </td>
                     <td><?= $row['created_at'] ?></td>
                     <td class="actions">
                         <?php if (isAdmin()): ?>
                             <a href="edit.php?id=<?= $row['id'] ?>" class="btn-edit">Edit</a>
                             <a href="delete.php?id=<?= $row['id'] ?>"
-                               onclick="return confirm('Delete <?= htmlspecialchars(addslashes($row['name'])) ?>?')"
-                               class="btn-delete">Delete</a>
+                                onclick="return confirm('Delete <?= htmlspecialchars(addslashes($row['name'])) ?>?')"
+                                class="btn-delete">Delete</a>
                         <?php else: ?>
                             <span style="color:#888; font-size:0.82rem; font-style:italic;">View Only</span>
                         <?php endif; ?>
@@ -130,4 +136,5 @@ $categories = $conn->query("SELECT DISTINCT name FROM categories ORDER BY name")
         <p class="count">Showing <?= $result->num_rows ?> product(s)</p>
     </div>
 </body>
+
 </html>
